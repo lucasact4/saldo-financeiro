@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Leia sua planilha financeira no navegador. Gráficos, ciclos e objetivos, com seus dados no seu dispositivo.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' data: blob: file:; connect-src 'none'; font-src 'self' file:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light">
+  <title>Saldo · Seu painel financeiro</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230e1c2c'/%3E%3Cpath d='M17 43V31m15 12V20m15 23V12' stroke='%2355d2a5' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/xlsx.full.min.js"></script>
+  <script defer src="vendor/chart.umd.min.js"></script>
+  <script defer src="model.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+  <aside class="sidebar" aria-label="Navegação principal">
+    <a class="brand" href="#overview" aria-label="Saldo, visão geral"><span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span><span>saldo<span class="brand-period">.</span><small>FINANÇAS COM CLAREZA</small></span></a>
+    <p class="nav-label">SEU ESPAÇO</p>
+    <nav id="navigation">
+      <button class="nav-item active" data-view="overview"><span data-icon="overview"></span>Visão geral</button>
+      <button class="nav-item" data-view="cycles"><span data-icon="cycles"></span>Ciclos e gastos</button>
+      <button class="nav-item" data-view="goals"><span data-icon="goals"></span>Metas e objetivos<span id="goal-nav-count" class="nav-count" hidden></span></button>
+      <button class="nav-item" data-view="sheets"><span data-icon="sheets"></span>Planilhas</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="source-box"><span class="source-icon" data-icon="file"></span><div><strong id="source-title">Seu arquivo</strong><span id="source-caption">Abra um .xlsx para começar</span></div><button id="source-info" class="icon-button" aria-label="Sobre a leitura da planilha" data-icon="info"></button></div>
+      <button class="sidebar-action" id="backup-button"><span data-icon="download"></span>Backup das metas</button>
+      <button class="sidebar-action" id="restore-button"><span data-icon="restore"></span>Restaurar backup</button>
+      <button class="privacy-note" id="privacy-button"><span data-icon="shield"></span>Leitura no seu dispositivo<span data-icon="info"></span></button>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span class="topbar-label">PAINEL FINANCEIRO</span><div class="topbar-actions"><span id="demo-tag" class="tag demo-tag" hidden>Demonstração</span><span class="local-badge"><span></span>Modo local</span><button class="button button-small" id="open-file"><span data-icon="upload"></span><span id="open-file-label">Abrir planilha</span></button><button class="icon-button mobile-tools" id="mobile-tools" aria-label="Opções e backup" data-icon="info"></button></div></header>
+    <main id="main" tabindex="-1">
+      <section id="welcome" class="welcome">
+        <div class="welcome-copy"><span class="eyebrow">UM NOVO OLHAR PARA SUA PLANILHA</span><h1>Seus números.<br>Uma visão mais clara.</h1><p>Continue organizando suas finanças no Excel. Veja o saldo, entenda seus ciclos e acompanhe seus objetivos por aqui.</p><div class="welcome-features"><span><span data-icon="chart"></span>Gráficos que fazem sentido</span><span><span data-icon="goals"></span>Metas com progresso</span><span><span data-icon="shield"></span>Arquivo lido no navegador</span></div></div>
+        <div id="dropzone" class="dropzone"><div class="upload-illustration" aria-hidden="true"><div class="file-illustration"><span>X</span><div></div><div></div><div></div></div><span class="mini-chart"><i></i><i></i><i></i><i></i></span></div><h2>Traga sua planilha original</h2><p>Arraste o arquivo .xlsx para cá<br>ou escolha no seu computador.</p><button class="button button-primary" id="welcome-open"><span data-icon="upload"></span>Escolher planilha</button><button class="text-button" id="demo-button">Explorar um exemplo</button><small>Sem instalação. Sem enviar seus dados.</small></div>
+        <div class="welcome-footer"><span data-icon="check"></span>Compatível com suas abas Financeiro 2026 e 2027. As outras abas também ficam disponíveis para consulta.</div>
+      </section>
+      <div id="loaded-app" hidden>
+        <section class="page-heading"><div><p class="eyebrow" id="page-eyebrow">SUA PLANILHA, EM PERSPECTIVA</p><h1 id="page-title">Visão geral</h1><p id="page-description">O que entrou, o que saiu e o que vem pela frente.</p></div><div id="year-switch" class="year-switch" aria-label="Ano financeiro"></div></section>
+        <div class="context-bar" id="context-bar"><div><span class="file-name" data-icon="file"></span><span id="filename-label"></span><span class="context-divider"></span><span id="source-year-label"></span></div><label>Ciclos fechados até <select id="closed-select" aria-label="Último ciclo fechado"></select></label></div>
+        <section id="view-overview" class="view" aria-label="Visão geral"></section>
+        <section id="view-cycles" class="view" aria-label="Ciclos e gastos" hidden></section>
+        <section id="view-goals" class="view" aria-label="Metas e objetivos" hidden></section>
+        <section id="view-sheets" class="view" aria-label="Consulta das planilhas" hidden></section>
+      </div>
+      <footer class="app-footer"><span>Feito para complementar sua planilha.</span><span>O arquivo original permanece como está.</span></footer>
+    </main>
+  </div>
+  <input id="file-input" type="file" accept=".xlsx" hidden>
+  <input id="backup-input" type="file" accept=".json,application/json" hidden>
+  <dialog id="goal-dialog" class="modal" aria-labelledby="goal-dialog-title"><form id="goal-form"><div class="modal-heading"><div><span class="eyebrow">SEUS OBJETIVOS</span><h2 id="goal-dialog-title">Acompanhar meta</h2></div><button type="button" class="icon-button" data-close-dialog="goal-dialog" aria-label="Fechar" data-icon="close"></button></div><div id="goal-form-fields"></div><p id="goal-form-error" class="form-error" role="alert" hidden></p><div class="modal-footer"><button type="button" class="button" data-close-dialog="goal-dialog">Cancelar</button><button type="submit" class="button button-primary">Salvar meta</button></div></form></dialog>
+  <dialog id="info-dialog" class="modal" aria-labelledby="info-title"><div class="modal-heading"><h2 id="info-title"></h2><button class="icon-button" data-close-dialog="info-dialog" aria-label="Fechar" data-icon="close"></button></div><div id="info-content"></div><div class="modal-footer" id="info-footer"><button class="button button-primary" data-close-dialog="info-dialog">Entendi</button></div></dialog>
+  <dialog id="cycle-dialog" class="modal cycle-modal" aria-labelledby="cycle-modal-title"><div class="modal-heading"><div><span class="eyebrow" id="cycle-modal-source"></span><h2 id="cycle-modal-title"></h2></div><button class="icon-button" data-close-dialog="cycle-dialog" aria-label="Fechar" data-icon="close"></button></div><div id="cycle-modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="loading" class="loading-overlay" hidden><div class="loading-card"><span class="spinner"></span><strong>Lendo sua planilha…</strong><span>Os dados estão sendo processados neste navegador.</span></div></div>
+  <noscript><div class="noscript">Ative o JavaScript no navegador para ler sua planilha.</div></noscript>
+</body>
+</html>

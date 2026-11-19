@@ -1,0 +1,9 @@
+# Dados pessoais: publicar somente o código do painel.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+saldo-backup-*.json
+*backup*.json
+.DS_Store
+Thumbs.db
